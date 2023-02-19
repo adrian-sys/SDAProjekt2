@@ -1,4 +1,4 @@
-# Zadanie 4 - Analiza ruchu SSH
+# Zadanie 5 - Analiza ruchu FTP
 
 Połączneie z maszuną SDA przez ssh
 ```shell
