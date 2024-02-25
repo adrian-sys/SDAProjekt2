@@ -21,5 +21,5 @@ net.ipv4.ip_forward = 1
 sudo arpspoof -i eth0 -t 192.168.179.135 192.168.179.2 
 ```
 
-### Wireshark umożliwia odczytania kerdek
+### Wireshark umożliwia odczytania kredek
 ![b7ba003199bab6abf79cfb715fc2f64a.png](/_resources/b7ba003199bab6abf79cfb715fc2f64a.png)
